@@ -20,7 +20,7 @@ int main()
                 return 1;
         }
 
-        int addr = 0x24;          //<<<<<The I2C address of the slave
+        int addr = 0x10;          //<<<<<The I2C address of the slave
         if (ioctl(file_i2c, I2C_SLAVE, addr) < 0)
         {
                 printf("Failed to acquire bus access and/or talk to slave.\n");
@@ -46,20 +46,40 @@ int main()
 
 
         //----- WRITE BYTES -----
-        length = 30;
+        length = 120;
 	for (int i = 0; i < length; i++)
 	{
 		buffer[i] = i % 0xFF;
 	}							//<<< Number of bytes to write
-        if (write(file_i2c, buffer, length) != length)          //write() returns the number of bytes actually written, if it doesn't match then an error occurred (e.g. no response from the device)
-        {
-                /* ERROR HANDLING: i2c transaction failed */
-                printf("Failed to write to the i2c bus.\n");
-        }
-        else{
-                printf("buffer send\n");
-                printf("%d :: %d\n", buffer[0], buffer[1]);
-        }
+
+	int send_ptr = 0;
+	while (length > 30)
+	{
+		if (write(file_i2c, buffer + send_ptr, 30) != 30)
+		{
+			printf("Failed to write to the i2c bus.\n");
+		}
+		else
+		{
+			printf("buffer %d send\n", send_ptr);
+			printf("%d :: %d\n", buffer[send_ptr], buffer[send_ptr + 1]);
+		}
+		length -= 30;
+		send_ptr += 30;
+	}
+
+	if (length > 0)
+	{
+        	if (write(file_i2c, buffer + send_ptr, length) != length)          //write() returns the number of bytes actually written, if it doesn't match then an error occurred (e.g. no response from the device)
+        	{
+               		/* ERROR HANDLING: i2c transaction failed */
+                	printf("Failed to write to the i2c bus.\n");
+        	}
+        	else{
+                	printf("final buffer send\n");
+                	printf("%d :: %d\n", buffer[send_ptr], buffer[send_ptr + 1]);
+        	}
+	}
 
 
 	return 0;

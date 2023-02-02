@@ -48,7 +48,19 @@ int main()
 	printf("======================\n\n");
 
 	// write to PCA
-	
+	buffer[0] = 0x45;
+	buffer[1] = 0xFF;
+
+	for (int i = 0; i < NUMPCA; i++)
+	{
+		if(write(fd[i], buffer, 2) != 2)
+		{
+			printf("Failed to write to I2C bus.\n");
+			return 3;
+		}
+	}
+
+
 	buffer[0] = 0x88;
 
 	int lightness = 0;
@@ -77,8 +89,6 @@ int main()
 			if (write(fd[i], buffer, 16) != 16)
 			{
 				printf("Failed to write to the I2C bus %d. \n");
-				printf("brightness: %d, status: %d.\n");
-				printf("==============================\n\n");
 				delay(500);
 			}
 		delay(25);
