@@ -93,17 +93,18 @@ int main()
 		{
 			printf("Failed to write to the I2C bus.\n");
 		}
+		/*
 		else
 		{
-			// printf("LED status (R, G, B):\n");
-			// printf("LED1: %3d\t%3d\t%3d\n", buffer[1], buffer[2], buffer[3]);
-			// printf("LED2: %3d\t%3d\t%3d\n", buffer[4], buffer[5], buffer[6]);
-			// printf("LED3: %3d\t%3d\t%3d\n", buffer[7], buffer[8], buffer[9]);	
-			// printf("LED4: %3d\t%3d\t%3d\n", buffer[10], buffer[11], buffer[12]);
-			// printf("LED5: %3d\t%3d\t%3d\n", buffer[13], buffer[14], buffer[15]);
+			printf("LED status (R, G, B):\n");
+			printf("LED1: %3d\t%3d\t%3d\n", buffer[1], buffer[2], buffer[3]);
+			printf("LED2: %3d\t%3d\t%3d\n", buffer[4], buffer[5], buffer[6]);
+			printf("LED3: %3d\t%3d\t%3d\n", buffer[7], buffer[8], buffer[9]);	
+			printf("LED4: %3d\t%3d\t%3d\n", buffer[10], buffer[11], buffer[12]);
+			printf("LED5: %3d\t%3d\t%3d\n", buffer[13], buffer[14], buffer[15]);
 		}
-
-		delay(20);
+		*/
+		// delay(20);
 	}
 
 	return 0;
