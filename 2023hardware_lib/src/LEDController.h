@@ -194,7 +194,7 @@ private:
     int play(const std::vector<std::vector<int>> &statusLists);
     void gpio_init();
     void select_channel(int channel);
-    void delayMicroseconds(int delay_us);
+    // void delayMicroseconds(int delay_us);
     const int HIGH = 1;
     const int LOW  = 0;
 
