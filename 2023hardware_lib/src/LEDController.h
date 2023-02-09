@@ -58,23 +58,136 @@ public:
     ~LEDController();
 
 private:
-    ws2811_t ledstring = 
+    ws2811_t ledstring[8] = 
     {
-        .freq = TARGET_FREQ,
-        .dmanum = DMA,
-        .channel = 
         {
-            [0] = 
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
             {
-                .gpionum = GPIO_PIN,
-                .invert = 0,
-                .count = 100,    //just for init
-                .strip_type = STRIP_TYPE,
-                .brightness = 255,
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
+            },
+        },
+
+        {
+            .freq = TARGET_FREQ,
+            .dmanum = DMA,
+            .channel = 
+            {
+                [0] = 
+                {
+                    .gpionum = GPIO_PIN,
+                    .invert = 0,
+                    .count = 100,    //just for init
+                    .strip_type = STRIP_TYPE,
+                    .brightness = 255,
+                },
             },
         },
     };
-
     int *length;
     int strip_num;
 

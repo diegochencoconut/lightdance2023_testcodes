@@ -9,7 +9,6 @@ WSHEADERFL:=-I
 all:$(obj)
 	$(CC) -o $(exe) $(obj) $(FL)=$(lib_dir)
 	$(MAKE) clean
-	clear
 
 %.o:$(src_dir)/%.cpp
 	$(CC) -c $(WSHEADERFL) $(lib_dir) $^ -o $@

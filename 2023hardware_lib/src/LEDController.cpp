@@ -41,22 +41,22 @@ int LEDController::init(const std::vector<int> &shape)
     length = new int[strip_num];
 
     // for WS2812 to allocate enough space for led data
-    // which will happen later in ws2811_init
-    int max_length = 0;
     for (int i = 0; i < strip_num; i++)
     {
         length[i] = shape[i];
-        if (max_length < shape[i]) max_length = shape[i];
     }
 
     // initialize WS2812B
     ws2811_return_t ret;
 
-    ledstring.channel[0].count = max_length + 10;
-    if ((ret = ws2811_init(&ledstring)) != WS2811_SUCCESS)
+    for (int i = 0; i < strip_num; i++)
     {
-        fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(ret));
-        return ret;
+        ledstring[i].channel[0].count = shape[i];
+        if ((ret = ws2811_init(&ledstring[i])) != WS2811_SUCCESS)
+        {
+            fprintf(stderr, "ws2811_init %d failed: %s\n", i, ws2811_get_return_t_str(ret));
+            return ret;
+        }
     }
 
     // initialize GPIO_PIN
@@ -66,22 +66,19 @@ int LEDController::init(const std::vector<int> &shape)
     {
 //      printf("Strip %d: ", i);
         select_channel(i);
-        ledstring.channel[0].count = length[i]; 
-//      printf("Count: %d.\n", ledstring.channel[0].count);
+//      printf("Count: %d.\n", ledstring[i].channel[0].count);
         for (int j = 0; j < length[i]; j++)
         {
-            ledstring.channel[0].leds[j] = 0;
+            ledstring[i].channel[0].leds[j] = 0;
         }
 
-        if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
+        if ((ret = ws2811_render(&ledstring[i])) != WS2811_SUCCESS)
         {
-            fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
+            fprintf(stderr, "ws2811_render %d failed: %s\n", i, ws2811_get_return_t_str(ret));
             return ret;
         }
-        usleep(2500);
+        usleep(length[i] * 30);
 //      printf("\n========================\n");
-        for (int j = 0; j < length[i]; j++)
-            ledstring.channel[0].leds[j] = 0;
     }
  
     return WS2811_SUCCESS;
@@ -112,7 +109,6 @@ int LEDController::play(const std::vector<std::vector<int>> &statusLists)
     {
 //      printf("Strip %d: ", i);
         select_channel(i);
-        ledstring.channel[0].count = length[i]; 
 //      printf("Count: %d.\n", ledstring.channel[0].count);
         for (int j = 0; j < length[i]; j++)
         {
@@ -120,18 +116,16 @@ int LEDController::play(const std::vector<std::vector<int>> &statusLists)
         
 //          printf("%X, ", led.getrgb());
 
-            ledstring.channel[0].leds[j] = led.getrgb();
+            ledstring[i].channel[0].leds[j] = led.getrgb();
         }
 
-        if ((ret = ws2811_render(&ledstring)) != WS2811_SUCCESS)
+        if ((ret = ws2811_render(&ledstring[i])) != WS2811_SUCCESS)
         {
-            fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(ret));
+            fprintf(stderr, "ws2811_render %d failed: %s\n", i, ws2811_get_return_t_str(ret));
             return ret;
         }
-        usleep(2500);
+        usleep(length[i] * 30);
 //      printf("\n========================\n");
-        for (int j = 0; j < length[i]; j++)
-            ledstring.channel[0].leds[j] = 0;
     }
     return 0;
 }
@@ -347,7 +341,9 @@ void LEDController::select_channel(int channel){
 LEDController::~LEDController()
 {
     delete[] length;
-    ws2811_fini(&ledstring);
+    for (int i = 0; i < strip_num; i++)
+        ws2811_fini(&ledstring[i]);
+
 //  printf("LED Controller finished.\n");
     close(A0);
     close(A1);

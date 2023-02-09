@@ -10,14 +10,14 @@ int main()
     LEDController strip;
     vector<int> shape;
     
-    int num_strip = 8;
+    int num_strip = 5;
 
     shape.clear();
     shape.resize(num_strip);
 
     for (int i = 0; i < num_strip; i++)
-        shape[i] = 70;
-
+        shape[i] = (i + 1) * 10;
+    shape[0] = 150;
     strip.init(shape);
 
     vector<vector<int>> status;
