@@ -17,7 +17,7 @@ using namespace std;
 
 // define
 #define NUMPCA 7
-const int PCAaddr[] = {0x20, 0x1f, 0x22, 0x23, 0x5b, 0x5c, 0x5e};
+const int PCAaddr[] = {0x1f, 0x20, 0x22, 0x23, 0x5b, 0x5c, 0x5e};
 
 
 class OFColor {
@@ -37,12 +37,12 @@ class OFController {
     OFController();
     int init();
     int sendAll(const vector<int> &statusLists);
-    ~OFController();
-	int buffer[1+15*NUMPCA] = {0};
-    int fd[NUMPCA];
 
   private:
     int I2C_init();
+	int buffer[1+15*NUMPCA] = {0};
+    int fd[NUMPCA];
+
 
 };
 

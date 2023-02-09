@@ -2,7 +2,7 @@ CC:=g++
 exe:=test
 src_dir:=.$(pwd)/src
 lib_dir:=.$(pwd)/lib
-obj:=main.o LEDController.o $(lib_dir)/libws2811.so
+obj:=OFmain.o OFController.o $(lib_dir)/libws2811.so
 FL:=-Wl,-rpath
 WSHEADERFL:=-I
 

@@ -73,12 +73,13 @@ int OFController::init() {
 int OFController::sendAll(const vector<int> &statusLists) {
     printf("%d strips sent\n", (int)statusLists.size());
     // OFController RGBData[(int)statusLists.size()];
-    buffer[0] = 136 //0x88
+    buffer[0] = 136; //0x88
     int counter;
     for (int i = 0; i < NUMPCA; i++)
 	{   
         counter = 0;
-        for(int j=i*5; j<j+5; j++){
+        for(int j=i*5; j<5 * (i+1); j++){
+//          printf("Counter: %d, i: %d, j: %d\n", counter, i, j);
             OFColor Status(statusLists[j]);
             buffer[counter*3+1] = Status.get_r();
             buffer[counter*3+2] = Status.get_g();
