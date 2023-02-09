@@ -10,14 +10,14 @@ int main()
     LEDController strip;
     vector<int> shape;
     
-    int num_strip = 5;
+    int num_strip = 1;
 
     shape.clear();
     shape.resize(num_strip);
 
     for (int i = 0; i < num_strip; i++)
         shape[i] = (i + 1) * 10;
-    shape[0] = 150;
+    shape[0] = 1;
     strip.init(shape);
 
     vector<vector<int>> status;
@@ -28,7 +28,7 @@ int main()
     {
         status[i].resize(shape[i]);
         for (int j = 0; j < shape[i]; j++)
-            status[i][j] = 10;
+            status[i][j] = 0x00000010;
     }
     strip.sendall(status);
 
@@ -38,9 +38,11 @@ int main()
         {
             status[i].resize(shape[i]);
             for (int j = 0; j < shape[i]; j++)
-                status[i][j] = (it + 1) * 10;
+                status[i][j] += 0x00000100;
         }
         strip.sendall(status);
+        printf("Now light: %X\n", status[0][0]);
+        usleep(100000);
     }
     return 0;
 }  

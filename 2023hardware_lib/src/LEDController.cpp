@@ -9,14 +9,14 @@ LEDStatus::LEDStatus(const int &colorCode)
     const int B = (colorCode >> 8) & 0xff;
     const int A = (colorCode >> 0) & 0xff;
 
-    const float gamma = 2.2;
+    const float gamma = 1;
     // convert rgba to rgb
 
     // GAMMA CORRECTION
     r = (int)(pow(R * A, (1/gamma)));
     g = (int)(pow(G * A, (1/gamma)));
     b = (int)(pow(B * A, (1/gamma)));
-    
+    printf("%X, %X, %X", r, g, b); 
     rgb = ( ( r << 16 ) + ( g << 8 ) + b );
 }
 
@@ -117,6 +117,7 @@ int LEDController::play(const std::vector<std::vector<int>> &statusLists)
 //          printf("%X, ", led.getrgb());
 
             ledstring[i].channel[0].leds[j] = led.getrgb();
+            if (j == 0) printf("rgb now: %X\n\n", led.getrgb());
         }
 
         if ((ret = ws2811_render(&ledstring[i])) != WS2811_SUCCESS)
