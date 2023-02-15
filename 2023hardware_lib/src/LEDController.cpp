@@ -68,7 +68,7 @@ int LEDController::sendAll(const std::vector<std::vector<int>> &statusLists) {
     // Check if data size is consistent with stored during initialization
     for (int i = 0; i < stripNum; i++) {
         if (statusLists[i].size() > stripShape[i]) {
-            printf("Error: Strip %d is longer then init settings: %d", statusLists[i].size(),
+            printf("Error: Strip %d is longer then init settings: %d", (int)statusLists[i].size(),
                    stripShape[i]);
             return -1;
         }

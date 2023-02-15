@@ -1,22 +1,20 @@
-#include <iostream>
 #include <cstdint>
+#include <iostream>
 #include <vector>
 using namespace std;
 
 #include "LEDController.h"
 
-int main()
-{
+int main() {
     LEDController strip;
     vector<int> shape;
-    
+
     int num_strip = 1;
 
     shape.clear();
     shape.resize(num_strip);
 
-    for (int i = 0; i < num_strip; i++)
-        shape[i] = (i + 1) * 10;
+    for (int i = 0; i < num_strip; i++) shape[i] = (i + 1) * 10;
     shape[0] = 1;
     strip.init(shape);
 
@@ -24,26 +22,20 @@ int main()
 
     status.resize(num_strip);
 
-    for (int i = 0; i < num_strip; i++)
-    {
+    for (int i = 0; i < num_strip; i++) {
         status[i].resize(shape[i]);
-        for (int j = 0; j < shape[i]; j++)
-            status[i][j] = 0x00000010;
+        for (int j = 0; j < shape[i]; j++) status[i][j] = 0x00000010;
     }
     strip.sendAll(status);
 
-    for (int it = 0; it < 50; it++)
-    {
-        for (int i = 0; i < num_strip; i++)
-        {
+    for (int it = 0; it < 50; it++) {
+        for (int i = 0; i < num_strip; i++) {
             status[i].resize(shape[i]);
-            for (int j = 0; j < shape[i]; j++)
-                status[i][j] += 0x00000100;
+            for (int j = 0; j < shape[i]; j++) status[i][j] += 0x00000100;
         }
         strip.sendAll(status);
         printf("Now light: %X\n", status[0][0]);
         usleep(100000);
     }
     return 0;
-}  
-
+}
