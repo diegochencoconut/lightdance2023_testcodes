@@ -1,9 +1,8 @@
 #include "LEDController.h"
 
-LEDStatus::LEDStatus() : r(0), g(0), b(0), rgb(0) {}
+LEDColor::LEDColor() : r(0), g(0), b(0), rgb(0) {}
 
-LEDStatus::LEDStatus(const int &colorCode)
-{
+LEDColor::LEDColor(const int &colorCode) {
     const int R = (colorCode >> 24) & 0xff;
     const int G = (colorCode >> 16) & 0xff;
     const int B = (colorCode >> 8) & 0xff;
@@ -13,85 +12,64 @@ LEDStatus::LEDStatus(const int &colorCode)
     // convert rgba to rgb
 
     // GAMMA CORRECTION
-    r = (int)(pow(R * A, (1/gamma)));
-    g = (int)(pow(G * A, (1/gamma)));
-    b = (int)(pow(B * A, (1/gamma)));
-    printf("%X, %X, %X", r, g, b); 
-    rgb = ( ( r << 16 ) + ( g << 8 ) + b );
+    r = (int)(pow(R * A, (1 / gamma)));
+    g = (int)(pow(G * A, (1 / gamma)));
+    b = (int)(pow(B * A, (1 / gamma)));
+    printf("%X, %X, %X", r, g, b);
+    rgb = ((r << 16) + (g << 8) + b);
 }
 
-uint32_t LEDStatus::getrgb()
-{
-    return rgb;
+uint32_t LEDColor::getRGB() { return rgb; }
+
+LEDController::LEDController() {
+    stripNum = 0;
+    // if (stripShape != NULL) stripShape = NULL;
 }
 
-LEDController::LEDController()
-{
-    strip_num = 0;
-
-    if (length != NULL)
-        length = NULL;
-    
-}
-
-int LEDController::init(const std::vector<int> &shape)
-{
+int LEDController::init(const std::vector<int> &shape) {
     // member variables initialization
-    strip_num = shape.size();
-    length = new int[strip_num];
-
-    // for WS2812 to allocate enough space for led data
-    for (int i = 0; i < strip_num; i++)
-    {
-        length[i] = shape[i];
-    }
+    stripNum = shape.size();
+    stripShape.assign(shape.begin(), shape.end());
 
     // initialize WS2812B
     ws2811_return_t ret;
 
-    for (int i = 0; i < strip_num; i++)
-    {
-        ledstring[i].channel[0].count = shape[i];
-        if ((ret = ws2811_init(&ledstring[i])) != WS2811_SUCCESS)
-        {
+    for (int i = 0; i < stripNum; i++) {
+        ledString[i].channel[0].count = shape[i];
+        if ((ret = ws2811_init(&ledString[i])) != WS2811_SUCCESS) {
             fprintf(stderr, "ws2811_init %d failed: %s\n", i, ws2811_get_return_t_str(ret));
             return ret;
         }
     }
 
     // initialize GPIO_PIN
-    gpio_init();
+    gpioInit();
 
-    for (int i = 0; i < strip_num; i++)
-    {
-//      printf("Strip %d: ", i);
+    for (int i = 0; i < stripNum; i++) {
+        //      printf("Strip %d: ", i);
         select_channel(i);
-//      printf("Count: %d.\n", ledstring[i].channel[0].count);
-        for (int j = 0; j < length[i]; j++)
-        {
-            ledstring[i].channel[0].leds[j] = 0;
+        //      printf("Count: %d.\n", ledstring[i].channel[0].count);
+        for (int j = 0; j < stripShape[i]; j++) {
+            ledString[i].channel[0].leds[j] = 0;
         }
 
-        if ((ret = ws2811_render(&ledstring[i])) != WS2811_SUCCESS)
-        {
+        if ((ret = ws2811_render(&ledString[i])) != WS2811_SUCCESS) {
             fprintf(stderr, "ws2811_render %d failed: %s\n", i, ws2811_get_return_t_str(ret));
             return ret;
         }
-        usleep(length[i] * 30);
-//      printf("\n========================\n");
+        usleep(stripShape[i] * 30);
+        //      printf("\n========================\n");
     }
- 
+
     return WS2811_SUCCESS;
 }
 
-int LEDController::sendall(const std::vector<std::vector<int>> &statusLists)
-{
+int LEDController::sendAll(const std::vector<std::vector<int>> &statusLists) {
     // Check if data size is consistent with stored during initialization
-    for (int i = 0; i < strip_num; i++)
-    {
-        if (statusLists[i].size() > length[i])
-        {
-            printf("Error: Strip %d is longer then init settings: %d", statusLists[i].size(), length[i]);
+    for (int i = 0; i < stripNum; i++) {
+        if (statusLists[i].size() > stripShape[i]) {
+            printf("Error: Strip %d is longer then init settings: %d", statusLists[i].size(),
+                   stripShape[i]);
             return -1;
         }
     }
@@ -101,40 +79,35 @@ int LEDController::sendall(const std::vector<std::vector<int>> &statusLists)
     return 0;
 }
 
-int LEDController::play(const std::vector<std::vector<int>> &statusLists)
-{
+int LEDController::play(const std::vector<std::vector<int>> &statusLists) {
     ws2811_return_t ret;
- 
-    for (int i = 0; i < strip_num; i++)
-    {
-//      printf("Strip %d: ", i);
-        select_channel(i);
-//      printf("Count: %d.\n", ledstring.channel[0].count);
-        for (int j = 0; j < length[i]; j++)
-        {
-            LEDStatus led(statusLists[i][j]);
-        
-//          printf("%X, ", led.getrgb());
 
-            ledstring[i].channel[0].leds[j] = led.getrgb();
-            if (j == 0) printf("rgb now: %X\n\n", led.getrgb());
+    for (int i = 0; i < stripNum; i++) {
+        //      printf("Strip %d: ", i);
+        select_channel(i);
+        //      printf("Count: %d.\n", ledstring.channel[0].count);
+        for (int j = 0; j < stripShape[i]; j++) {
+            LEDColor led(statusLists[i][j]);
+
+            //          printf("%X, ", led.getRGB());
+
+            ledString[i].channel[0].leds[j] = led.getRGB();
+            if (j == 0) printf("rgb now: %X\n\n", led.getRGB());
         }
 
-        if ((ret = ws2811_render(&ledstring[i])) != WS2811_SUCCESS)
-        {
+        if ((ret = ws2811_render(&ledString[i])) != WS2811_SUCCESS) {
             fprintf(stderr, "ws2811_render %d failed: %s\n", i, ws2811_get_return_t_str(ret));
             return ret;
         }
-        usleep(length[i] * 30);
-//      printf("\n========================\n");
+        usleep(stripShape[i] * 30);
+        //      printf("\n========================\n");
     }
     return 0;
 }
 
-void LEDController::gpio_init()
-{
+void LEDController::gpioInit() {
     int fd_export = open("/sys/class/gpio/export", O_WRONLY);
-    
+
     if (fd_export == -1) {
         perror("Unable to open /sys/class/gpio/export");
         exit(1);
@@ -157,7 +130,8 @@ void LEDController::gpio_init()
 
     close(fd_export);
 
-    // Set the pin to be an output by writing "out" to /sys/class/gpio/gpio24/direction
+    // Set the pin to be an output by writing "out" to
+    // /sys/class/gpio/gpio24/direction
 
     int fd = open("/sys/class/gpio/gpio23/direction", O_WRONLY);
     if (fd == -1) {
@@ -172,7 +146,8 @@ void LEDController::gpio_init()
 
     close(fd);
 
-    // Set the pin to be an output by writing "out" to /sys/class/gpio/gpio24/direction
+    // Set the pin to be an output by writing "out" to
+    // /sys/class/gpio/gpio24/direction
 
     fd = open("/sys/class/gpio/gpio24/direction", O_WRONLY);
     if (fd == -1) {
@@ -187,7 +162,8 @@ void LEDController::gpio_init()
 
     close(fd);
 
-    // Set the pin to be an output by writing "out" to /sys/class/gpio/gpio24/direction
+    // Set the pin to be an output by writing "out" to
+    // /sys/class/gpio/gpio24/direction
 
     fd = open("/sys/class/gpio/gpio25/direction", O_WRONLY);
     if (fd == -1) {
@@ -201,7 +177,6 @@ void LEDController::gpio_init()
     }
 
     close(fd);
-
 
     A0 = open("/sys/class/gpio/gpio23/value", O_WRONLY);
     if (fd == -1) {
@@ -222,154 +197,151 @@ void LEDController::gpio_init()
     }
 }
 
-void LEDController::select_channel(int channel){
-    switch(channel){
+void LEDController::select_channel(int channel) {
+    switch (channel) {
         case 0:
             if (write(A0, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             }
-	    break;
+            break;
         case 1:
             if (write(A0, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             };
-	    break;
+            break;
         case 2:
             if (write(A0, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             }
-	    break;
+            break;
         case 3:
             if (write(A0, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             }
-	    break;
+            break;
         case 4:
             if (write(A0, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             };
-	    break;
+            break;
         case 5:
             if (write(A0, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             };
-	    break;
+            break;
         case 6:
             if (write(A0, "0", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             }
-	    break;
+            break;
         case 7:
             if (write(A0, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio23/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio23/value");
+                exit(1);
             }
             if (write(A1, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio24/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio24/value");
+                exit(1);
             }
             if (write(A2, "1", 1) != 1) {
-            perror("Error writing to /sys/class/gpio/gpio25/value");
-            exit(1);
+                perror("Error writing to /sys/class/gpio/gpio25/value");
+                exit(1);
             }
-	    break;
+            break;
     }
 }
 
-LEDController::~LEDController()
-{
-    delete[] length;
-    for (int i = 0; i < strip_num; i++)
-        ws2811_fini(&ledstring[i]);
+LEDController::~LEDController() {
+    stripShape.clear();
+    for (int i = 0; i < stripNum; i++) ws2811_fini(&ledString[i]);
 
-//  printf("LED Controller finished.\n");
+    //  printf("LED Controller finished.\n");
     close(A0);
     close(A1);
     close(A2);
 
     int fd = open("/sys/class/gpio/unexport", O_WRONLY);
-    if (fd == -1)
-    {
-	perror("Unable to open /sys/class/gpio/unexpect");
-	exit(1);
-    }
-    
-    if (write(fd, "23", 2) != 2){
-        perror("Error writing to /sys/class/gpio/unexpect");
-    	exit(1);
+    if (fd == -1) {
+        perror("Unable to open /sys/class/gpio/unexpect");
+        exit(1);
     }
 
-    if (write(fd, "24", 2) != 2){
+    if (write(fd, "23", 2) != 2) {
         perror("Error writing to /sys/class/gpio/unexpect");
-    	exit(1);
+        exit(1);
     }
 
-    if (write(fd, "25", 2) != 2){
+    if (write(fd, "24", 2) != 2) {
         perror("Error writing to /sys/class/gpio/unexpect");
-    	exit(1);
+        exit(1);
+    }
+
+    if (write(fd, "25", 2) != 2) {
+        perror("Error writing to /sys/class/gpio/unexpect");
+        exit(1);
     }
 }
 
@@ -386,8 +358,9 @@ LEDController::~LEDController()
 // 		clock_gettime(CLOCK_REALTIME, &gettime_now);
 // 		time_difference = gettime_now.tv_nsec - start_time;
 // 		if (time_difference < 0)
-// 			time_difference += 1000000000;				//(Rolls over every 1 second)
-// 		if (time_difference > (delay_us * 1000))		//Delay for # nS
-// 			break;
+// 			time_difference += 1000000000;
+// //(Rolls
+// over every 1 second) 		if (time_difference > (delay_us * 1000))
+// //Delay for # nS 			break;
 // 	}
 // }

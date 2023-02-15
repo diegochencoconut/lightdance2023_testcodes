@@ -30,7 +30,7 @@ int main()
         for (int j = 0; j < shape[i]; j++)
             status[i][j] = 0x00000010;
     }
-    strip.sendall(status);
+    strip.sendAll(status);
 
     for (int it = 0; it < 50; it++)
     {
@@ -40,7 +40,7 @@ int main()
             for (int j = 0; j < shape[i]; j++)
                 status[i][j] += 0x00000100;
         }
-        strip.sendall(status);
+        strip.sendAll(status);
         printf("Now light: %X\n", status[0][0]);
         usleep(100000);
     }
