@@ -12,10 +12,13 @@ CFLAGS = -std=c++14
 CINCS = -I$(INC)
 CLIBS = 
 
-all : main
+all : directory main
 	# $(CC) -o $(exe) $(obj) $(FL)=$(lib_dir)
 	# $(MAKE) clean
 
+directory : 
+	mkdir -p $(OBJ)
+	mkdir -p $(BIN)
 main : main.o LEDController.o OFController.o
 	$(CC) -o $(BIN)/main \
 		$(OBJ)/main.o \
