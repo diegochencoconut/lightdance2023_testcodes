@@ -10,7 +10,7 @@ OFColor::OFColor(const int &colorCode) {
     const int B = (colorCode >> 8) & 0xff;
     const int A = (colorCode >> 0) & 0xff;
 
-    // TODO: convert rgba to rgb
+/*    // TODO: convert rgba to rgb
     const float gamma = 2.2;
     // convert rgba to rgb
 
@@ -18,6 +18,10 @@ OFColor::OFColor(const int &colorCode) {
     r = (int)(pow(R * A, (1 / gamma)));
     g = (int)(pow(G * A, (1 / gamma)));
     b = (int)(pow(B * A, (1 / gamma)));
+*/
+    r = R;
+    g = G;
+    b = B;
 }
 
 int OFColor::getR() { return r; }
@@ -29,6 +33,7 @@ int OFColor::getB() { return b; }
 OFController::OFController() {}
 
 int OFController::init() {
+    unsigned char buffer[10];
     printf("Hardware Initialzed\n");
 
     // open I2C bus
@@ -47,20 +52,25 @@ int OFController::init() {
     printf("======================\n\n");
 
     // write to PCA
-    buffer[0] = 69;   // 0x45
-    buffer[1] = 255;  // 0xFF
+    buffer[0] = 0x45;   // 0x45
+    buffer[1] = 0xFF;  // 0xFF
 
     for (int i = 0; i < NUMPCA; i++) {
         if (write(fd[i], buffer, 2) != 2) {
-            printf("Failed to write to I2C bus.\n");
-            return 3;
-        }
+            printf("Failed to write to I2C bus %d.\n", i);
+	}
+	printf("Now sending: ");
+	for (int j = 0; j < 2; j++)
+		printf("%d, ", buffer[j]);
+	printf("\n");
+        
     }
 
     return 1;
 }
 
 int OFController::sendAll(const vector<int> &statusLists) {
+    unsigned char buffer[20];
     printf("%d strips sent\n", (int)statusLists.size());
     // OFController RGBData[(int)statusLists.size()];
     buffer[0] = 136;  // 0x88
@@ -76,8 +86,8 @@ int OFController::sendAll(const vector<int> &statusLists) {
             counter++;
         }
         if (write(fd[i], buffer, 16) != 16) {
-            printf("Failed to write to the I2C bus.\n");
-            return 4;
+            printf("Failed to write to the I2C bus %d.\n", i);
+            //return 4;
         }
     }
 

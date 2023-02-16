@@ -20,7 +20,7 @@ int main()
                 return 1;
         }
 
-        int addr = 0x1f;          //<<<<<The I2C address of the slave
+        int addr = 0x5e;          //<<<<<The I2C address of the slave
         if (ioctl(file_i2c, I2C_SLAVE, addr) < 0)
         {
                 printf("Failed to acquire bus access and/or talk to slave.\n");
