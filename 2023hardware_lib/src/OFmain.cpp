@@ -10,7 +10,7 @@ int main()
     OFController OF;
     OF.init();
 
-    int OFnum = 1;
+    int OFnum = 7;
 
     vector<int> status;
     status.resize(5 * OFnum);
