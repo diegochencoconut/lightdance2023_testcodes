@@ -2,6 +2,8 @@
 #define LED_CONTROLLER_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include <cmath>
 #include <cstdint>
@@ -20,7 +22,7 @@
 // parameters for WS2812
 #define TARGET_FREQ WS2811_TARGET_FREQ
 #define GPIO_PIN_1 18
-#define GPIO_PIN_2 13
+#define GPIO_PIN_2 12
 #define DMA 10
 #define STRIP_TYPE WS2811_STRIP_GRB
 
@@ -60,16 +62,15 @@ class LEDController {
             .channel =
                 {
                     [0] =
-                        {                                                                                                                                                                                                       
-                            .gpionum = GPIO_PIN_1,                                                                                                                                                                              
-                            .invert = 0,                                                                                                                                                                                        
-                            .count = 100,                                                                                                                                                                                 
-                            .strip_type = STRIP_TYPE,                                                                                                                                                                           
-                            .brightness = 255,                                                                                                                                                                                  
-                        },               
+                        {
+			    .gpionum = GPIO_PIN_1,
+			    .invert = 0,
+			    .count = 100,
+			    .strip_type = STRIP_TYPE,
+			    .brightness = 255,
+			},               
                 },
         },
-
         {
             .freq = TARGET_FREQ,
             .dmanum = DMA,
