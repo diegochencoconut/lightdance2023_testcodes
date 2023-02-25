@@ -1,0 +1,25 @@
+£ Run the code
+
+Just simply run do:
+$ sudo ./test
+
+And you can make everything light up!
+
+==================================================================
+
+£ If you met the following error:
+
+Error writing to /sys/class/gpio/export: Device or resource busy
+
+Then just run following:
+$ ./close_gpio
+
+then everything will be great!
+
+==================================================================
+
+£ If you met any other error: 
+
+Contact Hardware team :
+b10901061@ntu.edu.tw (Guan-Ying, Chen / COCONUT)
+b10901099@ntu.edu.tw (Chien-Tung, Kuo)
