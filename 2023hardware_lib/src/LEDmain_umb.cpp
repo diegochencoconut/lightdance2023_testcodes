@@ -36,5 +36,7 @@ int main() {
         printf("Now light: %X\n", status[0][0]);
         usleep(100000);
     }
+
+    strip.fini();
     return 0;
 }
