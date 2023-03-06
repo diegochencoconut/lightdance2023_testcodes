@@ -314,7 +314,7 @@ void LEDController::select_channel(int channel) {
     }
 }
 
-LEDController::~LEDController() {
+void LEDController::fini() {
     stripShape.clear();
     for (int i = 0; i < stripNum; i++) ws2811_fini(&ledString[i]);
 
