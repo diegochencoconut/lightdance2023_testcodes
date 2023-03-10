@@ -37,12 +37,26 @@ int main() {
         usleep(100000);
     }
 
-    for (int it =0 ; it <num_strip; it++){
+    for (int i =0 ; i <num_strip; i++){
+	    status[i].resize(shape[i]);
+	    for(int j=0; j<shape[i]; j++){
+		    status[i][j] = 0x0000110011;
+	
+	    
+	   }
+    strip.sendAll(status);
+    }
+    
+    usleep(1000000);
+    for (int i=0; i<num_strip; i++){
 	    status[i].resize(shape[i]);
 	    for(int j=0; j<shape[i]; j++){
 		    status[i][j] = 0x00aa0000aa;
-	}
+	    }
+    strip.sendAll(status);
     }
+    
+
 
     strip.fini();
     return 0;
