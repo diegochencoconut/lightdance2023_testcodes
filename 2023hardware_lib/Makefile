@@ -30,13 +30,13 @@ main : main.o LEDController.o OFController.o
 		# -L$(LIB) -lws2811 \
 
 main.o :
-	$(CC) -c $(SRC)/LEDmain.cpp -o $(OBJ)/main.o \
-		$(CFLAGS) $(CINCS)
-	# $(CC) -c $(SRC)/OFmain.cpp -o $(OBJ)/main.o \
+	# $(CC) -c $(SRC)/LEDmain.cpp -o $(OBJ)/main.o \
 	# 	$(CFLAGS) $(CINCS)
+	$(CC) -c $(SRC)/LEDmain_umb.cpp -o $(OBJ)/main.o \
+	 	$(CFLAGS) $(CINCS)
 
 LEDController.o :
-	$(CC) -c $(SRC)/LEDController.cpp -o $(OBJ)/LEDController.o \
+	$(CC) -c $(SRC)/LEDController_umb.cpp -o $(OBJ)/LEDController.o \
 		$(CFLAGS) $(CINCS)
 
 OFController.o :
