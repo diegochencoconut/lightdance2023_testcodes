@@ -1,40 +1,102 @@
-#include <cstdint>
 #include <iostream>
+#include <cstdint>
 #include <vector>
 using namespace std;
 
 #include "LEDController.h"
+#include "OFController.h"
 
-int main() {
+int main()
+{
+    OFController OF;
     LEDController strip;
     vector<int> shape;
 
-    int num_strip = 8;
+    OF.init();
+
+    int OFnum = 7;
+    int num_strip = 2;
+
+    vector<int> status;
+    status.resize(5 * OFnum);
 
     shape.clear();
     shape.resize(num_strip);
 
-    for (int i = 0; i < num_strip; i++) shape[i] = 3;
+    for (int i = 0; i < num_strip; i++)	shape[i] = 100;
     strip.init(shape);
 
-    vector<vector<int>> status;
+    vector<vector<int>> LEDstatus;
+    LEDstatus.resize(num_strip);
 
-    status.resize(num_strip);
+    for (int i = 0; i < num_strip; i++)
+	    LEDstatus[i].resize(shape[i]);
+   
+     
+    for (int a = 0; a < 15; a++)
+    {
 
-    for (int i = 0; i < num_strip; i++) {
-        status[i].resize(shape[i]);
-        for (int j = 0; j < shape[i]; j++) status[i][j] = 0x00000010;
+    	for (int i = 0; i < 5*OFnum; i++)
+    	{
+        	status[i] = 0xFFFFFF00 + a;
+    	}
+
+//    	for (int i = 0; i < num_strip; i++)
+//	    	for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xFFFFFF00 + a;
+//	strip.sendAll(LEDstatus);
+    	OF.sendAll(status);
+    	usleep(1000000);
     }
-    strip.sendAll(status);
 
-    for (int it = 0; it < 50; it++) {
-        for (int i = 0; i < num_strip; i++) {
-            status[i].resize(shape[i]);
-            for (int j = 0; j < shape[i]; j++) status[i][j] += 0x00000100;
-        }
-        strip.sendAll(status);
-        printf("Now light: %X\n", status[0][0]);
-        usleep(100000);
+
+    /*
+    for (int i = 0; i < 5*OFnum; i++)
+    {
+        status[i] = 0xaa000010;
     }
+    for (int i = 0; i < num_strip; i++)
+	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xaa000010;
+    strip.sendAll(LEDstatus);
+    OF.sendAll(status);
+    usleep(1000000);
+
+    for (int i = 0; i < 5*OFnum; i++)
+    {
+        status[i] = 0x00aa0010;
+    }
+
+    for (int i = 0; i < num_strip; i++)
+	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0x00aa0010;
+    strip.sendAll(LEDstatus);
+    OF.sendAll(status);
+    usleep(1000000);
+
+    for (int i = 0; i < 5*OFnum; i++)
+    {
+        status[i] = 0x0000aa10;
+    }
+
+    for (int i = 0; i < num_strip; i++)
+	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0x0000aa10;
+    strip.sendAll(LEDstatus);
+    OF.sendAll(status);
+    usleep(1000000);
+
+    for (int i = 0; i < 5*OFnum; i++)
+    {
+        status[i] = 0x00000010;
+    }
+
+    for (int i = 0; i < num_strip; i++)
+	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0x00000010;
+    strip.sendAll(LEDstatus);
+    OF.sendAll(status);
+    */
+
+    strip.finish();
+
+    
     return 0;
-}
+}  
+
+

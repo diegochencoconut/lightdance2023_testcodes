@@ -37,6 +37,6 @@ int main() {
         usleep(100000);
     }
 
-    strip.fini();
+    strip.finish();
     return 0;
 }

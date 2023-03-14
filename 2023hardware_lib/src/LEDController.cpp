@@ -1,6 +1,11 @@
 #include "LEDController.h"
+#include "LEDController_umb.h"
 
 LEDColor::LEDColor() : r(0), g(0), b(0), rgb(0) {}
+#define MAX_BRIGHTNESS 200
+#define r_gamma 2.25
+#define g_gamma 2.3
+#define b_gamma 2.5
 
 LEDColor::LEDColor(const int &colorCode) {
     const int R = (colorCode >> 24) & 0xff;
@@ -8,26 +13,71 @@ LEDColor::LEDColor(const int &colorCode) {
     const int B = (colorCode >> 8) & 0xff;
     const int A = (colorCode >> 0) & 0xff;
 
-    const float gamma = 1;
     // convert rgba to rgb
+    //
+    float r_cal, g_cal, b_cal;
+    float r_max, g_max, b_max;
+
+    if ((R + G + B) > 0)
+    {
+	    r_cal = (1.0) * R / (R + G + B);
+	    g_cal = (1.0) * G / (R + G + B);
+	    b_cal = (1.0) * B / (R + G + B);
+	    printf("Ratio: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
+
+	    r_max = r_cal *= MAX_BRIGHTNESS;
+	    g_max = g_cal *= MAX_BRIGHTNESS;
+	    b_max = b_cal *= MAX_BRIGHTNESS;
+	    r_cal *= A;
+	    g_cal *= A;
+	    b_cal *= A;
+	    printf("Before gamma: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
+	    printf("Max value: r = %f, g = %f, b = %f\n", r_max, g_max, b_max);
+
+	    r_cal = pow((r_cal / r_max), r_gamma) * r_max;
+	    g_cal = pow((g_cal / g_max), g_gamma) * g_max;
+	    b_cal = pow((b_cal / b_max), b_gamma) * b_max;
+	    printf("After gamma: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
+
+	    r = (int)(r_cal);
+	    g = (int)(g_cal);
+	    b = (int)(b_cal);
+	    printf("FINAL: R = %d, G = %d, B = %d\n", r, g, b);
+
+	        
+    }
+    else
+    {
+	    r = 0;
+	    g = 0;
+	    b = 0;
+	    return;
+    }
 
     // GAMMA CORRECTION
-    r = (int)(pow(R * A, (1 / gamma)));
-    g = (int)(pow(G * A, (1 / gamma)));
-    b = (int)(pow(B * A, (1 / gamma)));
-    printf("%X, %X, %X", r, g, b);
-    rgb = ((r << 16) + (g << 8) + b);
+    // r = (int)(pow(R * A, (1 / gamma)));
+    // g = (int)(pow(G * A, (1 / gamma)));
+    // b = (int)(pow(B * A, (1 / gamma)));
+    // printf("%X, %X, %X", r, g, b);
+    // rgb = ((r << 16) + (g << 8) + b);
 }
 
 uint32_t LEDColor::getRGB() { return rgb; }
 
 LEDController::LEDController() {
     stripNum = 0;
+    isumb = false;
     // if (stripShape != NULL) stripShape = NULL;
 }
 
 int LEDController::init(const std::vector<int> &shape) {
     // member variables initialization
+    if (shape.size() == 2)
+    {
+	  isumb = true;
+	  return umb.init(shape);
+    }
+    isumb = false; 
     stripNum = shape.size();
     stripShape.assign(shape.begin(), shape.end());
 
@@ -66,6 +116,7 @@ int LEDController::init(const std::vector<int> &shape) {
 
 int LEDController::sendAll(const std::vector<std::vector<int>> &statusLists) {
     // Check if data size is consistent with stored during initialization
+    if (isumb)	return	umb.sendAll(statusLists);
     for (int i = 0; i < stripNum; i++) {
         if (statusLists[i].size() > stripShape[i]) {
             printf("Error: Strip %d is longer then init settings: %d", (int)statusLists[i].size(),
@@ -314,7 +365,12 @@ void LEDController::select_channel(int channel) {
     }
 }
 
-void LEDController::fini() {
+void LEDController::finish() {
+    if(isumb)
+    {
+	    umb.finish();
+	    return;
+    }
     stripShape.clear();
     for (int i = 0; i < stripNum; i++) ws2811_fini(&ledString[i]);
 
@@ -325,22 +381,22 @@ void LEDController::fini() {
 
     int fd = open("/sys/class/gpio/unexport", O_WRONLY);
     if (fd == -1) {
-        perror("Unable to open /sys/class/gpio/unexpect");
+        perror("Unable to open /sys/class/gpio/unexport");
         exit(1);
     }
 
     if (write(fd, "23", 2) != 2) {
-        perror("Error writing to /sys/class/gpio/unexpect");
+        perror("Error writing to /sys/class/gpio/unexport: 23");
         exit(1);
     }
 
     if (write(fd, "24", 2) != 2) {
-        perror("Error writing to /sys/class/gpio/unexpect");
+        perror("Error writing to /sys/class/gpio/unexport: 24");
         exit(1);
     }
 
     if (write(fd, "25", 2) != 2) {
-        perror("Error writing to /sys/class/gpio/unexpect");
+        perror("Error writing to /sys/class/gpio/unexport: 25");
         exit(1);
     }
 }

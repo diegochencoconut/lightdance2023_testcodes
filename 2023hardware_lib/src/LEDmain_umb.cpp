@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 
-#include "LEDController_umb.h"
+#include "LEDController.h"
 
 int main() {
     LEDController strip;
@@ -14,7 +14,7 @@ int main() {
     shape.clear();
     shape.resize(num_strip);
 
-    for (int i = 0; i < num_strip; i++) shape[i] = 50;
+    for (int i = 0; i < num_strip; i++) shape[i] = 3;
     strip.init(shape);
 
     vector<vector<int>> status;
@@ -37,13 +37,6 @@ int main() {
         usleep(100000);
     }
 
-    for (int it =0 ; it <num_strip; it++){
-	    status[i].resize(shape[i]);
-	    for(int j=0; j<shape[i]; j++){
-		    status[i][j] = 0x00aa0000aa;
-	}
-    }
-
-    strip.fini();
+    strip.finish();
     return 0;
 }

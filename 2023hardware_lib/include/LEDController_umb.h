@@ -1,5 +1,5 @@
-#ifndef LED_CONTROLLER_H
-#define LED_CONTROLLER_H
+#ifndef LED_CONTROLLER_UMB_H
+#define LED_CONTROLLER_UMB_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,10 +26,10 @@
 #define DMA 10
 #define STRIP_TYPE WS2811_STRIP_GRB
 
-class LEDColor {
+class LEDColor_umb {
    public:
-    LEDColor();
-    LEDColor(const int &colorCode);
+    LEDColor_umb();
+    LEDColor_umb(const int &colorCode);
     uint32_t getRGB();
 
    private:
@@ -39,9 +39,9 @@ class LEDColor {
     int b;
 };
 
-class LEDController {
+class LEDController_umb {
    public:
-    LEDController();
+    LEDController_umb();
 
     int init(const std::vector<int> &shape);
 
@@ -52,7 +52,7 @@ class LEDController {
     // -1: The data size of statausLists is not consist with number of strips
     // initialized
 
-    void fini();
+    void finish();
 
    private:
     ws2811_t ledString[2] = {

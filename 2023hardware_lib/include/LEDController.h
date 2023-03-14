@@ -25,6 +25,9 @@
 #include "pwm.h"
 #include "ws2811.h"
 
+// for umbrella
+#include "LEDController_umb.h"
+
 // parameters for WS2812
 #define TARGET_FREQ WS2811_TARGET_FREQ
 #define GPIO_PIN 18
@@ -57,9 +60,11 @@ class LEDController {
     // -1: The data size of statausLists is not consist with number of strips
     // initialized
 
-    void fini();
+    void finish();
 
    private:
+    bool isumb;
+    LEDController_umb umb;
     ws2811_t ledString[8] = {
         {
             .freq = TARGET_FREQ,
@@ -194,9 +199,6 @@ class LEDController {
     int play(const std::vector<std::vector<int>> &statusLists);
     void gpioInit();
     void select_channel(int channel);
-    // void delayMicroseconds(int delay_us);
-    const int HIGH = 1;
-    const int LOW = 0;
 
     int A0, A1, A2;
 };
