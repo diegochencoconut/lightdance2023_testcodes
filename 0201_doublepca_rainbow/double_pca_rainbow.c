@@ -10,7 +10,7 @@
 #define LIGHTNESS_MAX 25
 
 #define NUMPCA 2
-const int PCAaddr[] = {0x20, 0x1f};
+const int PCAaddr[] = {0x22, 0x23};
 
 #include <time.h>
 void delay(int number_of_ms)
@@ -65,7 +65,7 @@ int main()
 
 	int lightness = 0;
 	int status = 0;
-	while (true)
+	while (1)
 	{
 		if (status % 2 == 0)	lightness++;
 		else lightness--;

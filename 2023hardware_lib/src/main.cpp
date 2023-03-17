@@ -15,7 +15,7 @@ int main()
     OF.init();
 
     int OFnum = 7;
-    int num_strip = 2;
+    int num_strip = 8;
 
     vector<int> status;
     status.resize(5 * OFnum);
@@ -32,7 +32,7 @@ int main()
     for (int i = 0; i < num_strip; i++)
 	    LEDstatus[i].resize(shape[i]);
    
-     
+ /*    
     for (int a = 0; a < 15; a++)
     {
 
@@ -41,25 +41,40 @@ int main()
         	status[i] = 0xFFFFFF00 + a;
     	}
 
-//    	for (int i = 0; i < num_strip; i++)
-//	    	for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xFFFFFF00 + a;
-//	strip.sendAll(LEDstatus);
+    	for (int i = 0; i < num_strip; i++)
+	    	for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xFFFFFF00 + a;
+	strip.sendAll(LEDstatus);
     	OF.sendAll(status);
     	usleep(1000000);
     }
-
-
-    /*
+*/
+while(1){
+   for(int a = 1; a <= 100 ; a++) {
     for (int i = 0; i < 5*OFnum; i++)
     {
-        status[i] = 0xaa000010;
+        status[i] = 0xFF000000 + a;
     }
     for (int i = 0; i < num_strip; i++)
-	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xaa000010;
+	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xFF000000 + a;
     strip.sendAll(LEDstatus);
     OF.sendAll(status);
-    usleep(1000000);
+    usleep(10000);
+    }
 
+   for(int a = 100; a >= 1 ; a--) {
+    for (int i = 0; i < 5*OFnum; i++)
+    {
+        status[i] = 0xFF000000 + a;
+    }
+    for (int i = 0; i < num_strip; i++)
+	    for (int j = 0; j < shape[i]; j++)	LEDstatus[i][j] = 0xFF000000 + a;
+    strip.sendAll(LEDstatus);
+    OF.sendAll(status);
+    usleep(10000);
+    }
+}
+    // usleep(1000000);
+/*
     for (int i = 0; i < 5*OFnum; i++)
     {
         status[i] = 0x00aa0010;

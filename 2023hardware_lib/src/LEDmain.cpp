@@ -23,14 +23,44 @@ int main() {
 
     for (int i = 0; i < num_strip; i++) {
         status[i].resize(shape[i]);
-        for (int j = 0; j < shape[i]; j++) status[i][j] = 0x00000010;
+        for (int j = 0; j < shape[i]; j++) status[i][j] = 0xFF000000;
     }
     strip.sendAll(status);
 
-    for (int it = 0; it < 50; it++) {
+    for (int it = 0; it <= 100; it++) {
         for (int i = 0; i < num_strip; i++) {
             status[i].resize(shape[i]);
-            for (int j = 0; j < shape[i]; j++) status[i][j] += 0x00000100;
+            for (int j = 0; j < shape[i]; j++) status[i][j] += 1;
+        }
+        strip.sendAll(status);
+        printf("Now light: %X\n", status[0][0]);
+        usleep(100000);
+    }
+    for (int i = 0; i < num_strip; i++) {
+        status[i].resize(shape[i]);
+        for (int j = 0; j < shape[i]; j++) status[i][j] = 0x00FF0000;
+    }
+    strip.sendAll(status);
+
+    for (int it = 0; it <= 100; it++) {
+        for (int i = 0; i < num_strip; i++) {
+            status[i].resize(shape[i]);
+            for (int j = 0; j < shape[i]; j++) status[i][j] += 1;
+        }
+        strip.sendAll(status);
+        printf("Now light: %X\n", status[0][0]);
+        usleep(100000);
+    }
+    for (int i = 0; i < num_strip; i++) {
+        status[i].resize(shape[i]);
+        for (int j = 0; j < shape[i]; j++) status[i][j] = 0x0000FF00;
+    }
+    strip.sendAll(status);
+
+    for (int it = 0; it <= 100; it++) {
+        for (int i = 0; i < num_strip; i++) {
+            status[i].resize(shape[i]);
+            for (int j = 0; j < shape[i]; j++) status[i][j] += 1;
         }
         strip.sendAll(status);
         printf("Now light: %X\n", status[0][0]);
