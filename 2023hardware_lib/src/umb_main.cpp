@@ -15,7 +15,7 @@ int main()
     OF.init();
 
     int OFnum = 7;
-    int num_strip = 8;
+    int num_strip = 2;
 
     vector<int> status;
     status.resize(5 * OFnum);

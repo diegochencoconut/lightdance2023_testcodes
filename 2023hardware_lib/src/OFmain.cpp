@@ -15,38 +15,67 @@ int main()
     vector<int> status;
     status.resize(5 * OFnum);
 
-    for (int ab = 0; ab < 5; ab++)
+    for (int a = 0; a < 100; a++)
     {
         for (int i = 0; i < 5*OFnum; i++)
         {
-            status[i] = 0xaa000010;
+            status[i] = 0xFF000000 + a;
         }
 
         OF.sendAll(status);
-        usleep(1000000);
-
+        usleep(1000);
+    }
+    for (int a = 100; a > 0; a--)
+    {
         for (int i = 0; i < 5*OFnum; i++)
         {
-            status[i] = 0x00aa0010;
+            status[i] = 0xFF000000 + a;
         }
 
         OF.sendAll(status);
-        usleep(1000000);
+        usleep(1000);
+    }
 
+    for (int a = 0; a < 100; a++)
+    {
         for (int i = 0; i < 5*OFnum; i++)
         {
-            status[i] = 0x0000aa10;
+            status[i] = 0x00FF0000 + a;
         }
 
         OF.sendAll(status);
-        usleep(1000000);
-
+        usleep(1000);
+    }
+    for (int a = 100; a > 0; a--)
+    {
         for (int i = 0; i < 5*OFnum; i++)
         {
-            status[i] = 0x00000010;
+            status[i] = 0x00FF0000 + a;
         }
 
         OF.sendAll(status);
+        usleep(1000);
+    }
+    for (int a = 0; a < 100; a++)
+    {
+        for (int i = 0; i < 5*OFnum; i++)
+        {
+            status[i] = 0x0000FF00 + a;
+        }
+
+        OF.sendAll(status);
+        usleep(1000);
+    }
+    for (int a = 100; a > 0; a--)
+    {
+        for (int i = 0; i < 5*OFnum; i++)
+        {
+            status[i] = 0x0000FF00 + a;
+        }
+
+        OF.sendAll(status);
+        usleep(1000);
+    }
     }
 /*    for (int i = 0; i < 5 * OFnum; i++)
 	    status[i] = 0;

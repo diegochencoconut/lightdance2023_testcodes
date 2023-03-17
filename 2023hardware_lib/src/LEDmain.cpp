@@ -64,7 +64,7 @@ int main() {
         }
         strip.sendAll(status);
         printf("Now light: %X\n", status[0][0]);
-        usleep(100000);
+        usleep(1000);
     }
 
     strip.finish();

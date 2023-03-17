@@ -389,15 +389,15 @@ void LEDController::close_gpio()
     }
 
     if (write(fd, "23", 2) != 2) {
-        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 23");
+        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 23\n");
     }
 
     if (write(fd, "24", 2) != 2) {
-        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 24");
+        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 24\n");
     }
 
     if (write(fd, "25", 2) != 2) {
-        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 25");
+        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 25\n");
     }
 }
 

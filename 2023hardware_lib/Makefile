@@ -16,6 +16,10 @@ all : directory main
 	# $(CC) -o $(exe) $(obj) $(FL)=$(lib_dir)
 	# $(MAKE) clean
 
+umb : directory umb_main
+	# $(CC) -o $(exe) $(obj) $(FL)=$(lib_dir)
+	# $(MAKE) clean
+
 LED : directory LEDmain
 	# $(CC) -o $(exe) $(obj) $(FL)=$(lib_dir)
 	# $(MAKE) clean
@@ -35,6 +39,16 @@ directory :
 main : LEDController_umb.o LEDController.o OFController.o main.o
 	$(CC) -o $(BIN)/main \
 		$(OBJ)/main.o \
+		$(OBJ)/LEDController.o \
+		$(OBJ)/LEDController_umb.o \
+		$(OBJ)/OFController.o \
+		-lws2811 \
+		$(CFLAGS) $(CINCS) $(CLIBS)
+		# -L$(LIB) -lws2811 \
+
+umb_main : LEDController_umb.o LEDController.o OFController.o umb_main.o
+	$(CC) -o $(BIN)/main \
+		$(OBJ)/umb_main.o \
 		$(OBJ)/LEDController.o \
 		$(OBJ)/LEDController_umb.o \
 		$(OBJ)/OFController.o \
@@ -74,6 +88,10 @@ OFmain : LEDController_umb.o LEDController.o OFController.o OFmain.o
 
 main.o :
 	$(CC) -c $(SRC)/main.cpp -o $(OBJ)/main.o \
+	 	$(CFLAGS) $(CINCS)
+
+umb_main.o :
+	$(CC) -c $(SRC)/umb_main.cpp -o $(OBJ)/umb_main.o \
 	 	$(CFLAGS) $(CINCS)
 
 LEDmain.o : 
