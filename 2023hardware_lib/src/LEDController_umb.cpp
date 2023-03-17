@@ -20,12 +20,12 @@ LEDColor_umb::LEDColor_umb(const int &colorCode) {
     if ((R + G + B) > 0)
     {
 	    float a = A / 100.0;
-	    printf("A = %d\n", A);
+	    // printf("A = %d\n", A);
 	    r_cal = (1.0) * R / (R + G + B);
 	    g_cal = (1.0) * G / (R + G + B);
 	    b_cal = (1.0) * B / (R + G + B);
 
-	    printf("Ratio: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
+	    // printf("Ratio: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
 
 	    r_max = r_cal * MAX_BRIGHTNESS_R;
 	    g_max = g_cal * MAX_BRIGHTNESS_G;
@@ -33,19 +33,19 @@ LEDColor_umb::LEDColor_umb(const int &colorCode) {
 	    r_cal *= a * MAX_BRIGHTNESS_R;
 	    g_cal *= a * MAX_BRIGHTNESS_G;
 	    b_cal *= a * MAX_BRIGHTNESS_B;
-	    printf("Before gamma: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
-	    printf("Max value: r = %f, g = %f, b = %f\n", r_max, g_max, b_max);
+	    // printf("Before gamma: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
+	    // printf("Max value: r = %f, g = %f, b = %f\n", r_max, g_max, b_max);
 
 	    r_cal = (r_cal > 0)?pow((r_cal / r_max), r_gamma) * r_max:0;
 	    g_cal = (g_cal > 0)?pow((g_cal / g_max), g_gamma) * g_max:0;
 	    b_cal = (b_cal > 0)?pow((b_cal / b_max), b_gamma) * b_max:0;
-	    printf("After gamma: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
+	    // printf("After gamma: r = %f, g = %f, b = %f\n", r_cal, g_cal, b_cal);
 
 	    r = int(r_cal);
 	    g = int(g_cal);
 	    b = int(b_cal);
         rgb = (r << 16) + (g << 8) + b;
-	    printf("FINAL: R = %d, G = %d, B = %d\n", r, g, b);
+	    // printf("FINAL: R = %d, G = %d, B = %d\n", r, g, b);
     }
     else
     {
@@ -108,12 +108,12 @@ int LEDController_umb::sendAll(const std::vector<std::vector<int>> &statusLists)
     // Check if data size is consistent with stored during initialization
 
     if (statusLists[0].size() > stripShape[0]) {
-        printf("Error: Strip %d is longer then init settings: %d", (int)statusLists[0].size(),
+        fprintf(stderr, "Error: Strip %d is longer then init settings: %d", (int)statusLists[0].size(),
                stripShape[0]);
         return -1;
     }
     if (statusLists[1].size() > stripShape[1]) {
-        printf("Error: Strip %d is longer then init settings: %d", (int)statusLists[1].size(),
+        fprintf(stderr, "Error: Strip %d is longer then init settings: %d", (int)statusLists[1].size(),
                stripShape[1]);
         return -1;
     }
@@ -128,7 +128,7 @@ int LEDController_umb::play(const std::vector<std::vector<int>> &statusLists) {
     for (int i=0 ; i<stripShape[0]; i++){
         LEDColor_umb led(statusLists[0][i]);
         ledString[0].channel[0].leds[i] = led.getRGB();
-        if (i == 0) printf("rgb now: %X\n\n", led.getRGB());
+        // if (i == 0) printf("rgb now: %X\n\n", led.getRGB());
 
     }
     if ((ret = ws2811_render(&ledString[0])) != WS2811_SUCCESS) {
@@ -140,7 +140,7 @@ int LEDController_umb::play(const std::vector<std::vector<int>> &statusLists) {
     for (int i=0 ; i<stripShape[1]; i++){
         LEDColor_umb led(statusLists[1][i]);
         ledString[1].channel[0].leds[i] = led.getRGB();
-        if (i == 0) printf("rgb now: %X\n\n", led.getRGB());
+        // if (i == 0) printf("rgb now: %X\n\n", led.getRGB());
 
     }
     if ((ret = ws2811_render(&ledString[1])) != WS2811_SUCCESS) {

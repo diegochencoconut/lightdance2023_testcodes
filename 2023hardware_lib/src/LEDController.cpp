@@ -21,7 +21,7 @@ LEDColor::LEDColor(const int &colorCode) {
     if ((R + G + B) > 0)
     {
 	    float a = A / 100.0;
-	    printf("A = %d\n", A);
+	    // printf("A = %d\n", A);
 	    r_cal = (1.0) * R / (R + G + B);
 	    g_cal = (1.0) * G / (R + G + B);
 	    b_cal = (1.0) * B / (R + G + B);
@@ -46,7 +46,7 @@ LEDColor::LEDColor(const int &colorCode) {
 	    g = int(g_cal);
 	    b = int(b_cal);
         rgb = (r << 16) + (g << 8) + b;
-	    printf("FINAL: R = %d, G = %d, B = %d\n", r, g, b);
+	    // printf("FINAL: R = %d, G = %d, B = %d\n", r, g, b);
     }
     else
     {
@@ -71,6 +71,10 @@ int LEDController::init(const std::vector<int> &shape) {
 	  isumb = true;
 	  return umb.init(shape);
     }
+
+    // Check all gpio pin closed
+    close_gpio();
+    
     isumb = false; 
     stripNum = shape.size();
     stripShape.assign(shape.begin(), shape.end());
@@ -113,7 +117,7 @@ int LEDController::sendAll(const std::vector<std::vector<int>> &statusLists) {
     if (isumb)	return	umb.sendAll(statusLists);
     for (int i = 0; i < stripNum; i++) {
         if (statusLists[i].size() > stripShape[i]) {
-            printf("Error: Strip %d is longer then init settings: %d", (int)statusLists[i].size(),
+            fprintf(stderr, "Error: Strip %d is longer then init settings: %d", (int)statusLists[i].size(),
                    stripShape[i]);
             return -1;
         }
@@ -137,7 +141,7 @@ int LEDController::play(const std::vector<std::vector<int>> &statusLists) {
             //          printf("%X, ", led.getRGB());
 
             ledString[i].channel[0].leds[j] = led.getRGB();
-            if (j == 0) printf("rgb now: %X\n\n", led.getRGB());
+            // if (j == 0) printf("rgb now: %X\n\n", led.getRGB());
         }
 
         if ((ret = ws2811_render(&ledString[i])) != WS2811_SUCCESS) {
@@ -368,7 +372,12 @@ void LEDController::finish() {
     stripShape.clear();
     for (int i = 0; i < stripNum; i++) ws2811_fini(&ledString[i]);
 
-    //  printf("LED Controller finished.\n");
+    close_gpio();
+}
+
+void LEDController::close_gpio()
+{
+    printf("LED GPIO finished.\n");
     close(A0);
     close(A1);
     close(A2);
@@ -380,18 +389,15 @@ void LEDController::finish() {
     }
 
     if (write(fd, "23", 2) != 2) {
-        perror("Error writing to /sys/class/gpio/unexport: 23");
-        exit(1);
+        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 23");
     }
 
     if (write(fd, "24", 2) != 2) {
-        perror("Error writing to /sys/class/gpio/unexport: 24");
-        exit(1);
+        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 24");
     }
 
     if (write(fd, "25", 2) != 2) {
-        perror("Error writing to /sys/class/gpio/unexport: 25");
-        exit(1);
+        fprintf(stderr, "Error writing to /sys/class/gpio/unexport: 25");
     }
 }
 

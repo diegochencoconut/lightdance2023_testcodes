@@ -199,6 +199,7 @@ class LEDController {
     int play(const std::vector<std::vector<int>> &statusLists);
     void gpioInit();
     void select_channel(int channel);
+    void close_gpio();
 
     int A0, A1, A2;
 };
