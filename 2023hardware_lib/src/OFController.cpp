@@ -25,6 +25,12 @@ OFColor::OFColor(const int &colorCode) {
 	    // b = 130;
         A = 100;
     }
+    if (A <= 0)
+    {
+        r = g = b = 0;
+        rgb = 0;
+        return;
+    }
     else if ((R + G + B) > 0)
     {
 	    float a = A / 100.0;
