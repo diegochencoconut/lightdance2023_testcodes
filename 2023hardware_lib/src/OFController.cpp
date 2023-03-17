@@ -20,9 +20,10 @@ OFColor::OFColor(const int &colorCode) {
 
     if (A > 100)
     {
-	    r = 80;
-	    g = 255;
-	    b = 130;
+	    // r = 80;
+	    // g = 255;
+	    // b = 130;
+        A = 100;
     }
     else if ((R + G + B) > 0)
     {

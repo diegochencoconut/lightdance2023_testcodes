@@ -14,6 +14,7 @@ LEDColor::LEDColor(const int &colorCode) {
     const int G = (colorCode >> 16) & 0xff;
     const int B = (colorCode >> 8) & 0xff;
     const int A = (colorCode >> 0) & 0xff;
+    if (A > 100)    A = 100;
 
     float r_cal, g_cal, b_cal;
     float r_max, g_max, b_max;
