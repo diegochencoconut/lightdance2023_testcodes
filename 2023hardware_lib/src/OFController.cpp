@@ -18,22 +18,15 @@ OFColor::OFColor(const int &colorCode) {
     float r_cal, g_cal, b_cal;
     float r_max, g_max, b_max;
 
-    if (A > 100)
-    {
-	    // r = 80;
-	    // g = 255;
-	    // b = 130;
-        A = 100;
-    }
     if (A <= 0)
     {
         r = g = b = 0;
-        rgb = 0;
         return;
     }
     else if ((R + G + B) > 0)
     {
 	    float a = A / 100.0;
+        if (a >= 1) a = 1;
 	    // printf("A = %d\n", A);
 	    r_cal = (1.0) * R / (R + G + B);
 	    g_cal = (1.0) * G / (R + G + B);

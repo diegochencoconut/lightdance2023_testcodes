@@ -14,7 +14,6 @@ LEDColor::LEDColor(const int &colorCode) {
     const int G = (colorCode >> 16) & 0xff;
     const int B = (colorCode >> 8) & 0xff;
     const int A = (colorCode >> 0) & 0xff;
-    if (A > 100)    A = 100;
     if (A <= 0)
     {
         r = g = b = 0;
@@ -27,6 +26,7 @@ LEDColor::LEDColor(const int &colorCode) {
     if ((R + G + B) > 0)
     {
 	    float a = A / 100.0;
+        if (a >= 1)  a = 1;
 	    // printf("A = %d\n", A);
 	    r_cal = (1.0) * R / (R + G + B);
 	    g_cal = (1.0) * G / (R + G + B);

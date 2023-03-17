@@ -13,7 +13,7 @@ LEDColor_umb::LEDColor_umb(const int &colorCode) {
     const int G = (colorCode >> 16) & 0xff;
     const int B = (colorCode >> 8) & 0xff;
     const int A = (colorCode >> 0) & 0xff;
-    if (A > 100)    A = 100;
+    if (A > 100)    a = 100;
     if (A <= 0)
     {
         r = g = b = 0;
