@@ -6,8 +6,8 @@ LEDColor::LEDColor() : r(0), g(0), b(0), rgb(0) {}
 #define MAX_BRIGHTNESS_G 30
 #define MAX_BRIGHTNESS_B 30
 #define r_gamma 1.75
-#define g_gamma 1.75
-#define b_gamma 1.75
+#define g_gamma 2.3
+#define b_gamma 2.5
 
 LEDColor::LEDColor(const int &colorCode) {
     const int R = (colorCode >> 24) & 0xff;
@@ -26,7 +26,7 @@ LEDColor::LEDColor(const int &colorCode) {
     if ((R + G + B) > 0)
     {
 	    float a = A / 100.0;
-        if (a >= 1)  a = 1;
+        // if (a >= 1)  a = 1;
 	    // printf("A = %d\n", A);
 	    r_cal = (1.0) * R / (R + G + B);
 	    g_cal = (1.0) * G / (R + G + B);
@@ -51,8 +51,12 @@ LEDColor::LEDColor(const int &colorCode) {
 	    r = int(r_cal);
 	    g = int(g_cal);
 	    b = int(b_cal);
-        rgb = (r << 16) + (g << 8) + b;
 	    // printf("FINAL: R = %d, G = %d, B = %d\n", r, g, b);
+
+        if (r > 255)    r = 255;
+        if (g > 255)    g = 255;
+        if (b > 255)    b = 255;
+        rgb = (r << 16) + (g << 8) + b;
     }
     else
     {
